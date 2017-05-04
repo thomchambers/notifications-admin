@@ -201,9 +201,24 @@ def get_dashboard_totals(statistics):
     return statistics
 
 
+def calculate_usage_per_rate(usage):
+    rates = {}
+
+    for breakdown in usage:
+        if breakdown.get("billing_units") > 0:
+            if str(breakdown['rate']) in rates:
+                rates[str(breakdown['rate'])] += breakdown.get("credits")
+            else:
+                rates[str(breakdown['rate'])] = breakdown.get("credits")
+
+    return rates
+
+
 def calculate_usage(usage):
     # TODO: Don't hardcode these - get em from the API
     sms_free_allowance = 250000
+
+    sms_breakdown = calculate_usage_per_rate(usage)
 
     sms_rate = 0 if len(usage) == 0 else usage[0].get("rate", 0)
     sms_sent = get_sum_billing_units(breakdown for breakdown in usage if breakdown['notification_type'] == 'sms')
@@ -217,6 +232,7 @@ def calculate_usage(usage):
         'sms_allowance_remaining': max(0, (sms_free_allowance - sms_sent)),
         'sms_chargeable': max(0, sms_sent - sms_free_allowance),
         'sms_rate': sms_rate,
+        'sms_breakdown': sms_breakdown,
     }
 
 
