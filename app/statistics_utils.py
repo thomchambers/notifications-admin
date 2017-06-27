@@ -86,3 +86,20 @@ def add_rate_to_job(job):
         failure_rate=(get_failure_rate_for_job(job)) * 100,
         **job
     )
+
+
+# the methods are duplicated while refactoring should go once that work is done.
+def get_failure_rate_for_job_stats(job):
+    if not job.get('delivered'):
+        return 1 if job.get('failed') else 0
+    return (
+        job.get('failed', 0) /
+        (job.get('failed', 0) + job.get('delivered', 0))
+    )
+
+
+def add_rate_to_job_stats(job):
+    return dict(
+        failure_rate=(get_failure_rate_for_job(job)) * 100,
+        **job
+    )

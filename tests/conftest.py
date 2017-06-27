@@ -1067,7 +1067,7 @@ def mock_get_jobs(mocker, api_user_active):
             )
         ]
         return {
-            'data': [job for job in jobs if job['job_status'] in statuses],
+            'jobs': [job for job in jobs if job['job_status'] in statuses],
             'links': {
                 'prev': 'services/{}/jobs?page={}'.format(service_id, page - 1),
                 'next': 'services/{}/jobs?page={}'.format(service_id, page + 1)
