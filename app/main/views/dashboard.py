@@ -19,7 +19,7 @@ from app import (
     service_api_client,
     template_statistics_client
 )
-from app.statistics_utils import get_formatted_percentage, add_rate_to_job, add_rate_to_job_stats
+from app.statistics_utils import get_formatted_percentage, add_rate_to_job
 from app.utils import (
     user_has_permissions,
     get_current_financial_year,
@@ -185,9 +185,9 @@ def get_dashboard_partials(service_id):
         key=lambda job: job['scheduled_for']
     )
     immediate_jobs = [
-        add_rate_to_job_stats(job)
+        add_rate_to_job(job)
         for job in job_api_client.get_jobs(service_id, limit_days=7, statuses=statuses_to_display)['jobs']
-    ]
+        ]
     service = service_api_client.get_detailed_service(service_id)
 
     return {

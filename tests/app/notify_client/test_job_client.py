@@ -56,7 +56,7 @@ def test_client_gets_job_by_service_and_job(mocker):
     service_id = 'service_id'
     job_id = 'job_id'
 
-    expected_url = '/service/{}/job/{}'.format(service_id, job_id)
+    expected_url = '/service/{}/job/job-stats/{}'.format(service_id, job_id)
 
     client = JobApiClient()
     mock_get = mocker.patch('app.notify_client.job_api_client.JobApiClient.get')
@@ -86,35 +86,29 @@ def test_client_gets_jobs_with_page_parameter(mocker):
 def test_client_parses_job_stats(mocker):
     service_id = 'service_id'
     job_id = 'job_id'
-    expected_data = {'data': {
-        'status': 'finished',
-        'template_version': 3,
-        'id': job_id,
-        'updated_at': '2016-08-24T08:29:28.332972+00:00',
-        'service': service_id,
-        'processing_finished': '2016-08-24T08:11:48.676365+00:00',
-        'statistics': [
-            {'status': 'failed', 'count': 10},
-            {'status': 'technical-failure', 'count': 10},
-            {'status': 'temporary-failure', 'count': 10},
-            {'status': 'permanent-failure', 'count': 10},
-            {'status': 'created', 'count': 10},
-            {'status': 'sending', 'count': 10},
-            {'status': 'pending', 'count': 10},
-            {'status': 'delivered', 'count': 10}
-        ],
-        'original_file_name': 'test-notify-email.csv',
-        'created_by': {
-            'name': 'test-user@digital.cabinet-office.gov.uk',
-            'id': '3571f2ae-7a39-4fb4-9ad7-8453f5257072'
-        },
-        'created_at': '2016-08-24T08:09:56.371073+00:00',
-        'template': 'c0309261-9c9e-4530-8fed-5f67b02260d2',
-        'notification_count': 80,
-        'processing_started': '2016-08-24T08:09:57.661246+00:00'
-    }}
 
-    expected_url = '/service/{}/job/{}'.format(service_id, job_id)
+    expected_data = {'job': {
+            'created_at': '2016-08-24T08:11:48.676365+00:00',
+            'updated_at': '2016-08-24T08:29:28.332972+00:00',
+            'delivered': 10,
+            'failed': 40,
+            'job_id': job_id,
+            'job_status': 'finished',
+            'original_file_name': 'test-notify-email.csv',
+            'notification_count': 80,
+            'scheduled_for': None,
+            'sent': 50,
+            'service_id': service_id,
+            'template_id': 'c0309261-9c9e-4530-8fed-5f67b02260d2',
+            'template_version': 3,
+            'created_by': {
+                'name': 'test-user@digital.cabinet-office.gov.uk',
+                'id': '3571f2ae-7a39-4fb4-9ad7-8453f5257072'
+            }
+        }
+    }
+
+    expected_url = '/service/{}/job/job-stats/{}'.format(service_id, job_id)
 
     client = JobApiClient()
     mock_get = mocker.patch('app.notify_client.job_api_client.JobApiClient.get', return_value=expected_data)
@@ -122,35 +116,36 @@ def test_client_parses_job_stats(mocker):
     result = client.get_job(service_id, job_id)
 
     mock_get.assert_called_once_with(url=expected_url, params={})
-    assert result['data']['notifications_requested'] == 80
-    assert result['data']['notifications_sent'] == 50
-    assert result['data']['notification_count'] == 80
-    assert result['data']['notifications_failed'] == 40
+    assert result['job']['sent'] == 50
+    assert result['job']['notification_count'] == 80
+    assert result['job']['failed'] == 40
 
 
 def test_client_parses_empty_job_stats(mocker):
     service_id = 'service_id'
     job_id = 'job_id'
-    expected_data = {'data': {
-        'status': 'finished',
-        'template_version': 3,
-        'id': job_id,
+
+    expected_data = {'job': {
+        'created_at': '2017-06-27T12:37:21.470548Z',
         'updated_at': '2016-08-24T08:29:28.332972+00:00',
-        'service': service_id,
-        'processing_finished': '2016-08-24T08:11:48.676365+00:00',
-        'statistics': [],
+        'delivered': 0,
+        'failed': 0,
+        'job_id': job_id,
+        'job_status': 'finished',
         'original_file_name': 'test-notify-email.csv',
+        'notification_count': 80,
+        'scheduled_for': None,
+        'sent': 0,
+        'service_id': service_id,
+        'template_id': 'c0309261-9c9e-4530-8fed-5f67b02260d2',
+        'template_version': 3,
         'created_by': {
             'name': 'test-user@digital.cabinet-office.gov.uk',
             'id': '3571f2ae-7a39-4fb4-9ad7-8453f5257072'
-        },
-        'created_at': '2016-08-24T08:09:56.371073+00:00',
-        'template': 'c0309261-9c9e-4530-8fed-5f67b02260d2',
-        'notification_count': 80,
-        'processing_started': '2016-08-24T08:09:57.661246+00:00'
+        }
     }}
 
-    expected_url = '/service/{}/job/{}'.format(service_id, job_id)
+    expected_url = '/service/{}/job/job-stats/{}'.format(service_id, job_id)
 
     client = JobApiClient()
     mock_get = mocker.patch('app.notify_client.job_api_client.JobApiClient.get', return_value=expected_data)
@@ -158,10 +153,9 @@ def test_client_parses_empty_job_stats(mocker):
     result = client.get_job(service_id, job_id)
 
     mock_get.assert_called_once_with(url=expected_url, params={})
-    assert result['data']['notifications_requested'] == 0
-    assert result['data']['notifications_sent'] == 0
-    assert result['data']['notification_count'] == 80
-    assert result['data']['notifications_failed'] == 0
+    assert result['job']['sent'] == 0
+    assert result['job']['notification_count'] == 80
+    assert result['job']['failed'] == 0
 
 
 def test_client_parses_job_stats_for_service(mocker):
@@ -171,6 +165,7 @@ def test_client_parses_job_stats_for_service(mocker):
 
     expected_data = {"jobs": [
         {'created_at': '2017-06-27T12:37:21.470548Z',
+         'updated_at': None,
          'delivered': 3,
          'failed': 0,
          'job_id': job_1_id,
@@ -188,6 +183,7 @@ def test_client_parses_job_stats_for_service(mocker):
          }
          },
         {'created_at': '2017-06-27T12:31:15.478351Z',
+         'updated_at': None,
          'delivered': 39,
          'failed': 1,
          'job_id': job_2_id,

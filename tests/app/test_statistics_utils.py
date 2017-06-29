@@ -1,6 +1,11 @@
 import pytest
 
-from app.statistics_utils import sum_of_statistics, add_rates_to, add_rate_to_job, statistics_by_state
+from app.statistics_utils import (
+    sum_of_statistics,
+    add_rates_to,
+    statistics_by_state,
+    add_rate_to_job
+)
 
 
 @pytest.mark.parametrize('delivery_statistics', [
@@ -125,9 +130,9 @@ def test_service_statistics_by_state():
 def test_add_rate_to_job_calculates_rate(failed, delivered, expected_failure_rate):
     resp = add_rate_to_job(
         {
-            'notifications_failed': failed,
-            'notifications_delivered': delivered,
-            'id': 'foo'
+            'failed': failed,
+            'delivered': delivered,
+            'job_id': 'foo'
         }
     )
 
@@ -137,10 +142,10 @@ def test_add_rate_to_job_calculates_rate(failed, delivered, expected_failure_rat
 def test_add_rate_to_job_preserves_initial_fields():
     resp = add_rate_to_job(
         {
-            'notifications_failed': 0,
-            'notifications_delivered': 0,
-            'id': 'foo'
+            'failed': 0,
+            'delivered': 0,
+            'job_id': 'foo'
         }
     )
 
-    assert set(resp.keys()) == {'notifications_failed', 'notifications_delivered', 'id', 'failure_rate'}
+    assert set(resp.keys()) == {'failed', 'delivered', 'job_id', 'failure_rate'}

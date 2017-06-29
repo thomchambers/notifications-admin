@@ -1080,10 +1080,10 @@ def test_create_job_should_call_api(
     when
 ):
     service_id = service_one['id']
-    data = mock_get_job(service_one['id'], fake_uuid)['data']
-    job_id = data['id']
+    data = mock_get_job(service_one['id'], fake_uuid)['job']
+    job_id = data['job_id']
     original_file_name = data['original_file_name']
-    template_id = data['template']
+    template_id = data['template_id']
     notification_count = data['notification_count']
     with logged_in_client.session_transaction() as session:
         session['upload_data'] = {
@@ -1225,14 +1225,14 @@ def test_check_messages_should_revalidate_file_when_uploading_file(
             +447700900986,,,,
         """
     )
-    data = mock_get_job(service_one['id'], fake_uuid)['data']
+    data = mock_get_job(service_one['id'], fake_uuid)['job']
     with logged_in_client.session_transaction() as session:
         session['upload_data'] = {'original_file_name': 'invalid.csv',
-                                  'template_id': data['template'],
+                                  'template_id': data['template_id'],
                                   'notification_count': data['notification_count'],
                                   'valid': True}
     response = logged_in_client.post(
-        url_for('main.start_job', service_id=service_one['id'], upload_id=data['id']),
+        url_for('main.start_job', service_id=service_one['id'], upload_id=data['job_id']),
         data={'file': (BytesIO(''.encode('utf-8')), 'invalid.csv')},
         content_type='multipart/form-data',
         follow_redirects=True

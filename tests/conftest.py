@@ -997,7 +997,7 @@ def mock_create_job(mocker, api_user_active):
 @pytest.fixture(scope='function')
 def mock_get_job(mocker, api_user_active):
     def _get_job(service_id, job_id):
-        return {"data": job_json(service_id, api_user_active, job_id=job_id)}
+        return {"job": job_json(service_id, api_user_active, job_id=job_id)}
 
     return mocker.patch('app.job_api_client.get_job', side_effect=_get_job)
 
@@ -1005,7 +1005,7 @@ def mock_get_job(mocker, api_user_active):
 @pytest.fixture(scope='function')
 def mock_get_scheduled_job(mocker, api_user_active):
     def _get_job(service_id, job_id):
-        return {"data": job_json(
+        return {"job": job_json(
             service_id,
             api_user_active,
             job_id=job_id,
@@ -1019,7 +1019,7 @@ def mock_get_scheduled_job(mocker, api_user_active):
 @pytest.fixture(scope='function')
 def mock_get_cancelled_job(mocker, api_user_active):
     def _get_job(service_id, job_id):
-        return {"data": job_json(
+        return {"job": job_json(
             service_id,
             api_user_active,
             job_id=job_id,
@@ -1033,10 +1033,11 @@ def mock_get_cancelled_job(mocker, api_user_active):
 @pytest.fixture(scope='function')
 def mock_get_job_in_progress(mocker, api_user_active):
     def _get_job(service_id, job_id):
-        return {"data": job_json(
+        return {"job": job_json(
             service_id, api_user_active, job_id=job_id,
             notification_count=10,
-            notifications_requested=5
+            notifications_failed=1,
+            notifications_delivered=4
         )}
 
     return mocker.patch('app.job_api_client.get_job', side_effect=_get_job)

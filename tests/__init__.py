@@ -175,7 +175,9 @@ def job_json(
     notifications_sent=1,
     notifications_requested=1,
     job_status='finished',
-    scheduled_for=''
+    scheduled_for='',
+    notifications_delivered=1,
+    notifications_failed=0
 ):
     if job_id is None:
         job_id = str(generate_uuid())
@@ -184,15 +186,16 @@ def job_json(
     if created_at is None:
         created_at = str(datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f%z'))
     data = {
-        'id': job_id,
-        'service': service_id,
-        'template': template_id,
+        'job_id': job_id,
+        'service_id': service_id,
+        'template_id': template_id,
         'template_version': template_version,
         'original_file_name': original_file_name,
         'created_at': created_at,
         'notification_count': notification_count,
-        'notifications_sent': notifications_sent,
-        'notifications_requested': notifications_requested,
+        'sent': notifications_sent,
+        'failed': notifications_failed,
+        'delivered': notifications_delivered,
         'job_status': job_status,
         'statistics': [],
         'created_by': created_by_json(
@@ -239,7 +242,7 @@ def notification_json(
 
     job_payload = None
     if job:
-        job_payload = {'id': job['id'], 'original_file_name': job['original_file_name']}
+        job_payload = {'id': job['job_id'], 'original_file_name': job['original_file_name']}
 
     data = {
         'notifications': [{

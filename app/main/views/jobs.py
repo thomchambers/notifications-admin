@@ -97,7 +97,7 @@ def view_jobs(service_id):
 @login_required
 @user_has_permissions('view_activity', admin_override=True)
 def view_job(service_id, job_id):
-    job = job_api_client.get_job(service_id, job_id)['data']
+    job = job_api_client.get_job(service_id, job_id)['job']
     if job['job_status'] == 'cancelled':
         abort(404)
 
@@ -105,7 +105,7 @@ def view_job(service_id, job_id):
     filter_args['status'] = _set_status_filters(filter_args)
 
     total_notifications = job.get('notification_count', 0)
-    processed_notifications = job.get('notifications_delivered', 0) + job.get('notifications_failed', 0)
+    processed_notifications = job.get('delivered', 0) + job.get('failed', 0)
     return render_template(
         'views/jobs/job.html',
         finished=(total_notifications == processed_notifications),
@@ -113,14 +113,14 @@ def view_job(service_id, job_id):
         template=get_template(
             service_api_client.get_service_template(
                 service_id=service_id,
-                template_id=job['template'],
+                template_id=job['template_id'],
                 version=job['template_version']
             )['data'],
             current_service,
             letter_preview_url=url_for(
                 '.view_template_version_preview',
                 service_id=service_id,
-                template_id=job['template'],
+                template_id=job['template_id'],
                 version=job['template_version'],
                 filetype='png',
             ),
@@ -129,7 +129,7 @@ def view_job(service_id, job_id):
         updates_url=url_for(
             ".view_job_updates",
             service_id=service_id,
-            job_id=job['id'],
+            job_id=job['job_id'],
             status=request.args.get('status', ''),
             help=get_help_argument()
         ),
@@ -142,7 +142,7 @@ def view_job(service_id, job_id):
 @login_required
 @user_has_permissions('view_activity', admin_override=True)
 def view_job_csv(service_id, job_id):
-    job = job_api_client.get_job(service_id, job_id)['data']
+    job = job_api_client.get_job(service_id, job_id)['job']
     template = service_api_client.get_service_template(
         service_id=service_id,
         template_id=job['template'],
@@ -184,7 +184,7 @@ def cancel_job(service_id, job_id):
 @user_has_permissions('view_activity', admin_override=True)
 def view_job_updates(service_id, job_id):
     return jsonify(**get_job_partials(
-        job_api_client.get_job(service_id, job_id)['data']
+        job_api_client.get_job(service_id, job_id)['job']
     ))
 
 
@@ -318,8 +318,8 @@ def get_status_filters(service, message_type, statistics):
 def _get_job_counts(job, help_argument):
     sending = 0 if job['job_status'] == 'scheduled' else (
         job.get('notification_count', 0) -
-        job.get('notifications_delivered', 0) -
-        job.get('notifications_failed', 0)
+        job.get('delivered', 0) -
+        job.get('failed', 0)
     )
     return [
         (
@@ -327,8 +327,8 @@ def _get_job_counts(job, help_argument):
             query_param,
             url_for(
                 ".view_job",
-                service_id=job['service'],
-                job_id=job['id'],
+                service_id=job['service_id'],
+                job_id=job['job_id'],
                 status=query_param,
                 help=help_argument
             ),
@@ -344,11 +344,11 @@ def _get_job_counts(job, help_argument):
             ],
             [
                 'delivered', 'delivered',
-                job.get('notifications_delivered', 0)
+                job.get('delivered', 0)
             ],
             [
                 'failed', 'failed',
-                job.get('notifications_failed', 0)
+                job.get('failed', 0)
             ]
         ]
     ]
@@ -358,7 +358,7 @@ def get_job_partials(job):
     filter_args = _parse_filter_args(request.args)
     filter_args['status'] = _set_status_filters(filter_args)
     notifications = notification_api_client.get_notifications_for_service(
-        job['service'], job['id'], status=filter_args['status']
+        job['service_id'], job['job_id'], status=filter_args['status']
     )
     return {
         'counts': render_template(
@@ -370,11 +370,11 @@ def get_job_partials(job):
             'partials/jobs/notifications.html',
             notifications=notifications['notifications'],
             more_than_one_page=bool(notifications.get('links', {}).get('next')),
-            percentage_complete=(job['notifications_requested'] / job['notification_count'] * 100),
+            percentage_complete=((job['delivered'] + job['failed']) / job['notification_count'] * 100),
             download_link=url_for(
                 '.view_job_csv',
                 service_id=current_service['id'],
-                job_id=job['id'],
+                job_id=job['job_id'],
                 status=request.args.get('status')
             ),
             help=get_help_argument(),
