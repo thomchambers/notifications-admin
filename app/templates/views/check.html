@@ -131,14 +131,10 @@
   {% else %}
 
     <h1 class="heading-large">
-      Preview of {{ template.name }}
+      {{ original_file_name }}
     </h1>
     {{ skip_to_file_contents() }}
 
-  {% endif %}
-
-  {% if not errors %}
-    {{ template|string }}
   {% endif %}
 
   <div class="bottom-gutter-3-2">
@@ -167,47 +163,55 @@
     </form>
   {% endif %}
   </div>
+  <script>
+  setTimeout(function(){
+    $(function(){
+      $("#file-contents").hide();
+    })
+  }, 10)
+  </script>
+  <h2 class="heading-medium">Letter 1 of 2043<a href="#" onclick='$("#file-contents").toggle();'>Choose a different row from {{ original_file_name }}</a></h2>
+  {{ template|string }}
 
-  {% if not request.args.from_test %}
-
-    <h2 class="heading-medium" id="{{ file_contents_header_id }}">{{ original_file_name }}</h2>
-
-    {% call(item, row_number) list_table(
-      recipients.initial_annotated_rows_with_errors if row_errors and not recipients.missing_column_headers else recipients.initial_annotated_rows,
-      caption=original_file_name,
-      caption_visible=False,
-      field_headings=[
-        '<span class="visually-hidden">Row in file</span><span aria-hidden="true" class="{}">1</span>'.format("table-field-invisible-error" if errors else "")|safe
-      ] + recipients.column_headers
-    ) %}
-      {% call index_field() %}
-        <span class="{% if item.index in recipients.rows_with_errors %}table-field-error{% endif %}">
-          {{ item.index + 2 }}
-        </span>
-      {% endcall %}
-      {% for column in recipients.column_headers %}
-        {% if item['columns'][column].error and not recipients.missing_column_headers %}
-          {% call field() %}
-            <span>
-              <span class="table-field-error-label">{{ item['columns'][column].error }}</span>
-              {{ item['columns'][column].data if item['columns'][column].data != None }}
-            </span>
-          {% endcall %}
-        {% elif item['columns'][column].ignore %}
-          {{ text_field(item['columns'][column].data or '', status='default') }}
-        {% else %}
-          {{ text_field(item['columns'][column].data or '') }}
-        {% endif %}
-      {% endfor %}
-      {% if item['columns'].get(None) %}
-        {% for column in item['columns'][None].data %}
-          {{ text_field(column, status='default') }}
-        {% endfor %}
-      {% endif %}
+  <div id="file-contents">
+  <h2 class="heading-medium" id="{{ file_contents_header_id }}">{{ original_file_name }}</h2>
+  <a href="#" onclick='$("#file-contents").toggle();' style="position:absolute; top: 25px; right: 30px; display: inline-block;" class="button-secondary">Close</a>
+  <div id="file-contents-contents">
+  {% call(item, row_number) list_table(
+    recipients.initial_annotated_rows_with_errors if row_errors and not recipients.missing_column_headers else recipients.initial_annotated_rows,
+    caption=original_file_name,
+    caption_visible=False,
+    field_headings=[
+      '<span class="visually-hidden">Row in file</span><span aria-hidden="true" class="{}">1</span>'.format("table-field-invisible-error" if errors else "")|safe
+    ] + recipients.column_headers
+  ) %}
+    {% call index_field() %}
+      <span class="{% if item.index in recipients.rows_with_errors %}table-field-error{% endif %}">
+        {{ item.index + 2 }}
+      </span>
     {% endcall %}
-
-  {% endif %}
-
+    {% for column in recipients.column_headers %}
+      {% if item['columns'][column].error and not recipients.missing_column_headers %}
+        {% call field() %}
+          <span>
+            <span class="table-field-error-label">{{ item['columns'][column].error }}</span>
+            {{ item['columns'][column].data if item['columns'][column].data != None }}
+          </span>
+        {% endcall %}
+      {% elif item['columns'][column].ignore %}
+        {{ text_field(item['columns'][column].data or '', status='default') }}
+      {% else %}
+        {% call field() %}
+          <a href="#" onclick='$("#file-contents").toggle();' class="file-list-filename">{{ item['columns'][column].data or '' }}</a>
+        {% endcall %}
+      {% endif %}
+    {% endfor %}
+    {% if item['columns'].get(None) %}
+      {% for column in item['columns'][None].data %}
+        {{ text_field(column, status='default') }}
+      {% endfor %}
+    {% endif %}
+  {% endcall %}
 
   {% if recipients.too_many_rows %}
     <p class="table-show-more-link">
@@ -226,6 +230,7 @@
       Only showing rows with errors
     </p>
   {% endif %}
+  </div></div>
 
   {% if errors %}
     <h2 class="heading-medium">Preview of {{ template.name }}</h2>

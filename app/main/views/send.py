@@ -623,7 +623,8 @@ def _check_notification(service_id, template_id, exception=None):
     template = get_template(
         db_template,
         current_service,
-        show_recipient=True
+        show_recipient=True,
+        expand_emails=True,
     )
 
     # go back to start of process
