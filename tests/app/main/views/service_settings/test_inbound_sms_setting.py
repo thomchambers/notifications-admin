@@ -51,8 +51,7 @@ def test_allow_inbound_sms_sets_a_number_for_service(
     mock_activate_inbound_sms = mocker.patch('app.inbound_number_client.activate_inbound_sms_service')
 
     response = logged_in_client.get(url_for('main.service_set_inbound_number',
-                                            service_id=service_one['id'],
-                                            set_inbound_sms=True))
+                                            service_id=service_one['id']))
 
     assert response.status_code == 302
     assert response.location == url_for('main.service_settings', service_id=service_one['id'], _external=True)
@@ -68,7 +67,7 @@ def test_allow_inbound_sms_returns_400_if_no_numbers_available(
     mock_activate_inbound = mocker.patch('app.inbound_number_client.activate_inbound_sms_service',
                                          side_effect=HTTPError)
     logged_in_client.get(
-        url_for('main.service_set_inbound_number', service_id=service_one['id'], set_inbound_sms='True'))
+        url_for('main.service_set_inbound_number', service_id=service_one['id']))
     mock_activate_inbound.assert_called_once_with(service_one['id'])
     assert mock_switch_service.call_count == 2
 
@@ -92,24 +91,16 @@ def test_set_text_message_sender_and_inbound_sms_permission_exists_return_403(
     assert app.current_service['permissions'] == ['inbound_sms']
 
 
-def test_turn_inbound_sms_off(
+def test_inbound_sms_cannot_be_turned_off(
         logged_in_client,
         service_one,
-        mocker
 ):
     service_one['permissions'] = ['inbound_sms']
-    update_service_mock = mocker.patch('app.service_api_client.update_service',
-                                       return_value=service_one)
-    mock_deactivate_inbound = mocker.patch('app.inbound_number_client.deactivate_inbound_sms_permission')
+    response = logged_in_client.get(url_for('main.service_set_inbound_number', service_id=service_one['id']))
 
-    response = logged_in_client.get(url_for('main.service_set_inbound_number', service_id=service_one['id'],
-                                            set_inbound_sms=False))
     assert response.status_code == 302
-    assert response.location == url_for('main.service_set_sms_sender', service_id=service_one['id'], _external=True)
-
-    assert app.current_service['permissions'] == []
-    mock_deactivate_inbound.assert_called_once_with(service_id=service_one['id'])
-    assert update_service_mock.called
+    assert response.location == url_for('main.service_settings', service_id=service_one['id'], _external=True)
+    assert app.current_service['permissions'] == ['inbound_sms']
 
 
 def test_set_text_message_sender_and_not_inbound_sms(

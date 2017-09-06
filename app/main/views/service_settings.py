@@ -353,15 +353,13 @@ def service_set_sms_sender(service_id):
 @login_required
 @user_has_permissions('manage_settings', admin_override=True)
 def service_set_inbound_number(service_id):
+    if 'inbound_sms' in current_service['permissions']:
+        return redirect(url_for('.service_settings', service_id=service_id))
+
     switch_service_permissions(current_service['id'], 'inbound_sms')
-    set_inbound_sms = request.args.get('set_inbound_sms', False)
     try:
-        if set_inbound_sms == 'True':
-            inbound_number_client.activate_inbound_sms_service(service_id)
-            return redirect(url_for('.service_settings', service_id=service_id))
-        else:
-            inbound_number_client.deactivate_inbound_sms_permission(service_id=service_id)
-            return redirect(url_for('.service_set_sms_sender', service_id=service_id))
+        inbound_number_client.activate_inbound_sms_service(service_id)
+        return redirect(url_for('.service_settings', service_id=service_id))
     except HTTPError as e:
         switch_service_permissions(current_service['id'], 'inbound_sms')
         raise e

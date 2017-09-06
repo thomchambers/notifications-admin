@@ -19,6 +19,3 @@ class InboundNumberClient(NotifyAdminAPIClient):
 
     def activate_inbound_sms_service(self, service_id):
         return self.post(url='/inbound-number/service/{}'.format(service_id), data={})
-
-    def deactivate_inbound_sms_permission(self, service_id):
-        return self.post(url='/inbound-number/service/{}/off'.format(service_id), data={})

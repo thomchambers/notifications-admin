@@ -231,12 +231,8 @@
             </a>
           </li>
           <li class="bottom-gutter">
-          {% if can_receive_inbound %}
-            <a href="{{ url_for('.service_set_inbound_number', service_id=current_service.id, set_inbound_sms=False) }}" class="button">
-              Stop inbound sms
-            </a>
-          {% else %}
-            <a href="{{ url_for('.service_set_inbound_number', service_id=current_service.id, set_inbound_sms=True) }}" class="button">
+          {% if not can_receive_inbound %}
+            <a href="{{ url_for('.service_set_inbound_number', service_id=current_service.id) }}" class="button">
               Allow inbound sms
             </a>
           {% endif %}
