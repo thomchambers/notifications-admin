@@ -30,7 +30,7 @@ class Config(object):
     NOTIFY_LOG_PATH = os.getenv('NOTIFY_LOG_PATH')
 
     DESKPRO_DEPT_ID = 5
-    DESKPRO_ASSIGNED_AGENT_TEAM_ID = 5
+    DESKPRO_ASSIGNED_AGENT_TEAM_ID = 6
 
     ADMIN_CLIENT_USER_NAME = 'notify-admin'
     ASSETS_DEBUG = False
