@@ -6,6 +6,7 @@ instances: 1
 memory: 1G
 env:
   NOTIFY_APP_NAME: admin
+  ADMIN_BASE_URL: https://notify-admin-prototype-production.cloudapps.digital
 
   # Credentials variables
   ADMIN_CLIENT_SECRET: null
