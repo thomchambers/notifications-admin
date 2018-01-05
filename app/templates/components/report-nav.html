@@ -1,0 +1,62 @@
+{% from 'components/pill.html' import pill %}
+
+{% macro report_nav(
+  selected=None
+) %}
+  <div class="">
+    {{ pill(
+      [
+        (
+            'Overview',
+            'overview',
+            '',
+            ''
+        ),
+        (
+            'Monthly',
+            'monthly',
+            '',
+            ''
+        ),
+        (
+            'Weekly',
+            'weekly',
+            '',
+            ''
+        ),
+      ],
+      selected
+    ) }}
+  </div>
+  <div class="bottom-gutter">
+    {{ pill(
+      [
+        (
+            'Services',
+            'services',
+            '',
+            ''
+        ),
+        (
+            'Templates',
+            'templates',
+            '',
+            ''
+        ),
+        (
+            'Team members',
+            'team-members',
+            '',
+            ''
+        ),
+        (
+            'Uploaded files',
+            'uploaded-files',
+            '',
+            ''
+        ),
+      ],
+      selected
+    ) }}
+  </div>
+{% endmacro %}
