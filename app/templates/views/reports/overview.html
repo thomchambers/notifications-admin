@@ -11,39 +11,86 @@
 
 {% block maincolumn_content %}
 
-    <h1 class='heading-large'>Reports</h1>
+    {% include 'views/reports/_heading.html' %}
 
-    {{ report_nav('overview') }}
+    {{ report_nav(selected, current_service=current_service) }}
 
-    <p class="bottom-gutter">
-      <a href="{{ download_link }}" download="download" class="heading-small">Download this report</a>
-    </p>
+    <div id='pill-selected-item'>
+      <div class='grid-row bottom-gutter-1-2'>
+        <div class='column-third'>
+          <h2 class='heading-small'>Emails</h2>
+          <div class="keyline-block">
+            {{ big_number(3, 'sent', smaller=True) }}
+            {{ big_number("Unlimited", 'free allowance', smaller=True) }}
+          </div>
+        </div>
+        <div class='column-third'>
+          <h2 class='heading-small'>Text messages</h2>
+          <div class="keyline-block">
+            {{ big_number(481516, 'sent', smaller=True) }}
+            {{ big_number(250000, 'free allowance', smaller=True) }}
+            {{ big_number(0, 'free allowance remaining', smaller=True) }}
+            {% if sms_chargeable %}
+              {{ big_number(
+                481516 - 250000,
+                'at {:.2f} pence per message'.format(0.0155 * 100),
+                smaller=True
+              ) }}
+            {% endif %}
+          </div>
+        </div>
+        <div class='column-one-third'>
+          <h2 class='heading-small'>Letters</h2>
+          <div class="keyline-block">
+            {{ big_number(0, 'sent', smaller=True) }}
+          </div>
+        </div>
+      </div>
 
-    <div class='dashboard-table'>
-      {% call(item, row_number) list_table(
-        [
-          {'id': 'foo', 'name': 'Reminder', 'type': 'sms', 'requested_count': 321, 'failure_rate': 2},
-          {'id': 'foo', 'name': 'Confirmation', 'type': 'sms', 'requested_count': 123, 'failure_rate': 4},
-          {'id': 'foo', 'name': 'Reminder new wording', 'type': 'sms', 'requested_count': 3, 'failure_rate': 33},
-          {'id': 'foo', 'name': 'Confirmation new wording', 'type': 'sms', 'requested_count': 1, 'failure_rate': 0},
-        ],
-        caption='foo',
-        caption_visible=False,
-        empty_message='',
-        field_headings=[
-          'Template',
-          'Messages sent'
-        ],
-        field_headings_visible=False
-      ) %}
-        {% call row_heading() %}
-          <a class="file-list-filename" href="{{ url_for('.view_template', service_id=current_service.id, template_id=item.id) }}">{{ item.name }}</a>
-          <span class="file-list-hint">
-            {{ message_count_label(1, item.type, suffix='template')|capitalize }}
-          </span>
-        {% endcall %}
-        {{ spark_bar_field(item.requested_count, 321, failure_rate=item.failure_rate) }}
-      {% endcall %}
-    </div>
+      <div class='grid-row bottom-gutter-1-2'>
+        <div class='column-one-third'>
+          <div class="keyline-block">
+            &nbsp;
+          </div>
+        </div>
+        <div class='column-one-third'>
+          <div class="keyline-block">
+            {{ big_number(
+              ((481516 - 250000) * 0.0155),
+              'spent',
+              currency="£",
+              smaller=True
+            ) }}
+          </div>
+        </div>
+        <div class='column-one-third'>
+          <div class="keyline-block">
+            {{ big_number(
+              0,
+              'spent',
+              currency="£",
+              smaller=True
+            ) }}
+          </div>
+        </div>
+      </div>
+
+      <div class='grid-row'>
+        <div class='column-whole'>
+          <div class="keyline-block">
+            <div class='grid-row'>
+              <div class='column-one-third'>&nbsp;</div>
+              <div class='column-one-third'>&nbsp;</div>
+              <div class='column-one-third'>
+                {{ big_number(
+                  ((481516 - 250000) * 0.0155),
+                  'total',
+                  currency="£",
+                  smaller=True
+                ) }}
+              </div>
+          </div>
+        </div>
+      </div>
 
 {% endblock %}

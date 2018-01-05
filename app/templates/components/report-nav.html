@@ -1,7 +1,8 @@
 {% from 'components/pill.html' import pill %}
 
 {% macro report_nav(
-  selected=None
+  selected=None,
+  current_service=None
 ) %}
   <div class="">
     {{ pill(
@@ -9,19 +10,19 @@
         (
             'Overview',
             'overview',
-            '',
+            url_for('.reports', service_id=current_service.id),
             ''
         ),
         (
             'Monthly',
             'monthly',
-            '',
+            url_for('.reports', service_id=current_service.id, report='monthly'),
             ''
         ),
         (
             'Weekly',
             'weekly',
-            '',
+            url_for('.reports', service_id=current_service.id, report='weekly'),
             ''
         ),
       ],
@@ -34,25 +35,25 @@
         (
             'Services',
             'services',
-            '',
+            url_for('.reports', service_id=current_service.id, report='services'),
             ''
         ),
         (
             'Templates',
             'templates',
-            '',
+            url_for('.reports', service_id=current_service.id, report='templates'),
             ''
         ),
         (
             'Team members',
             'team-members',
-            '',
+            url_for('.reports', service_id=current_service.id, report='team-members'),
             ''
         ),
         (
             'Uploaded files',
             'uploaded-files',
-            '',
+            url_for('.reports', service_id=current_service.id, report='uploaded-files'),
             ''
         ),
       ],

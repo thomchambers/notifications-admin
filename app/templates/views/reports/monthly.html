@@ -1,0 +1,57 @@
+{% from "components/big-number.html" import big_number %}
+{% from "components/message-count-label.html" import message_count_label %}
+{% from "components/table.html" import list_table, field, hidden_field_heading, row_heading, text_field, spark_bar_field %}
+{% from "components/report-nav.html" import report_nav %}
+
+{% extends "withnav_template.html" %}
+
+{% block service_page_title %}
+  Reports
+{% endblock %}
+
+{% block maincolumn_content %}
+
+    {% include 'views/reports/_heading.html' %}
+
+    {{ report_nav(selected, current_service=current_service) }}
+
+    {% include 'views/reports/_download.html' %}
+
+    <div class="dashboard-table body-copy-table">
+      {% call(month, row_index) list_table(
+        months,
+        caption="Total spend",
+        caption_visible=False,
+        empty_message='',
+        field_headings=[
+          'By month',
+          hidden_field_heading('Cost'),
+        ],
+        field_headings_visible=True
+      ) %}
+        {% call row_heading() %}
+          {{ month.name }}
+        {% endcall %}
+        {% call field(align='left') %}
+          {{ big_number(
+            sms_rate * month.paid,
+            currency="£",
+            smallest=True
+          ) }}
+          <ul>
+          {% if month.free %}
+            <li class="tabular-numbers">{{ "{:,}".format(month.free) }} free text messages</li>
+          {% endif %}
+          {% if month.paid %}
+            <li class="tabular-numbers">{{ "{:,}".format(month.paid) }} text messages at
+            {{- ' {:.2f}p'.format(sms_rate * 100) }}</li>
+          {% endif %}
+          {% if not (month.free or month.paid) %}
+            <li aria-hidden="true">–</li>
+          {% endif %}
+          </ul>
+        {% endcall %}
+      {% endcall %}
+    </div>
+
+{% endblock %}

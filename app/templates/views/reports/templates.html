@@ -1,0 +1,47 @@
+{% from "components/big-number.html" import big_number %}
+{% from "components/message-count-label.html" import message_count_label %}
+{% from "components/table.html" import list_table, field, hidden_field_heading, row_heading, text_field, spark_bar_field %}
+{% from "components/report-nav.html" import report_nav %}
+
+{% extends "withnav_template.html" %}
+
+{% block service_page_title %}
+  Reports
+{% endblock %}
+
+{% block maincolumn_content %}
+
+    {% include 'views/reports/_heading.html' %}
+
+    {{ report_nav(selected, current_service=current_service) }}
+
+    {% include 'views/reports/_download.html' %}
+
+    <div class='dashboard-table'>
+      {% call(item, row_number) list_table(
+        [
+          {'id': 'foo', 'name': 'Reminder', 'type': 'sms', 'requested_count': 321, 'failure_rate': 2},
+          {'id': 'foo', 'name': 'Confirmation', 'type': 'sms', 'requested_count': 123, 'failure_rate': 4},
+          {'id': 'foo', 'name': 'Reminder new wording', 'type': 'sms', 'requested_count': 3, 'failure_rate': 33},
+          {'id': 'foo', 'name': 'Confirmation new wording', 'type': 'sms', 'requested_count': 1, 'failure_rate': 0},
+        ],
+        caption='foo',
+        caption_visible=False,
+        empty_message='',
+        field_headings=[
+          'Template',
+          'Messages sent'
+        ],
+        field_headings_visible=False
+      ) %}
+        {% call row_heading() %}
+          <a class="file-list-filename" href="{{ url_for('.view_template', service_id=current_service.id, template_id=item.id) }}">{{ item.name }}</a>
+          <span class="file-list-hint">
+            {{ message_count_label(1, item.type, suffix='template')|capitalize }}
+          </span>
+        {% endcall %}
+        {{ spark_bar_field(item.requested_count, 321, failure_rate=item.failure_rate) }}
+      {% endcall %}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% from "components/big-number.html" import big_number %}
+{% from "components/message-count-label.html" import message_count_label %}
+{% from "components/table.html" import list_table, field, hidden_field_heading, row_heading, text_field, spark_bar_field %}
+{% from "components/report-nav.html" import report_nav %}
+{% from "components/previous-next-navigation.html" import previous_next_navigation %}
+
+{% extends "withnav_template.html" %}
+
+{% block service_page_title %}
+  Reports
+{% endblock %}
+
+{% block maincolumn_content %}
+
+    {% include 'views/reports/_heading.html' %}
+
+    {{ report_nav(selected, current_service=current_service) }}
+
+    {% include 'views/reports/_download.html' %}
+
+    {% include 'views/dashboard/_jobs.html' %}
+
+    {{ previous_next_navigation({}, {
+        'url': '#',
+        'title': 'Next',
+        'label': 'page 2 of 10'
+    }) }}
+
+{% endblock %}

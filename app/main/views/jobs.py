@@ -45,9 +45,9 @@ def view_jobs(service_id):
     page = int(request.args.get('page', 1))
     # all but scheduled and cancelled
     statuses_to_display = job_api_client.JOB_STATUSES - {'scheduled', 'cancelled'}
-    jobs_response = job_api_client.get_jobs(service_id, statuses=statuses_to_display, page=page)
     jobs = [
-        add_rate_to_job(job) for job in jobs_response['data']
+        add_rate_to_job(job)
+        for job in job_api_client.get_jobs(service_id, statuses=statuses_to_display, page=page)['data']
     ]
 
     prev_page = None
