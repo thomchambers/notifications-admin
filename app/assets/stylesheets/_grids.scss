@@ -71,6 +71,11 @@
   margin-bottom: $gutter * 3/2;
 }
 
+.bottom-gutter-4-3 {
+  @extend %bottom-gutter;
+  margin-bottom: $gutter * 4/3;
+}
+
 .bottom-gutter-2 {
   @extend %bottom-gutter;
   margin-bottom: $gutter * 2;

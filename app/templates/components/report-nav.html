@@ -25,6 +25,12 @@
             url_for('.reports', service_id=current_service.id, report='weekly'),
             ''
         ),
+        (
+            'Uploaded files',
+            'uploaded-files',
+            url_for('.reports', service_id=current_service.id, report='uploaded-files'),
+            ''
+        ),
       ],
       selected
     ) }}
@@ -33,15 +39,15 @@
     {{ pill(
       [
         (
-            'Services',
-            'services',
-            url_for('.reports', service_id=current_service.id, report='services'),
-            ''
-        ),
-        (
             'Templates',
             'templates',
             url_for('.reports', service_id=current_service.id, report='templates'),
+            ''
+        ),
+        (
+            'Teams',
+            'services',
+            url_for('.reports', service_id=current_service.id, report='services'),
             ''
         ),
         (
@@ -50,12 +56,7 @@
             url_for('.reports', service_id=current_service.id, report='team-members'),
             ''
         ),
-        (
-            'Uploaded files',
-            'uploaded-files',
-            url_for('.reports', service_id=current_service.id, report='uploaded-files'),
-            ''
-        ),
+
       ],
       selected
     ) }}

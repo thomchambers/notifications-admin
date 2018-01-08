@@ -1,5 +1,5 @@
 import calendar
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import partial
 from flask import (
     render_template,
@@ -175,10 +175,27 @@ def reports(service_id, report='overview'):
         )['data']
     ]
 
+    today = datetime.now()
+    monday = today - timedelta(days=today.weekday())
+    day_of_year = today.timetuple().tm_yday
+    weeks = list(reversed(list(reversed([
+        (
+            (monday - timedelta(days=i - 1)).strftime('%A %-d %B'),
+            (monday - timedelta(days=(i - 7))).strftime('%A %-d %B'),
+        )
+        for i in range(8, 373, 7)
+    ]))[:-1] + [
+        (
+            monday.strftime('%A %-m %B'),
+            'today'
+        )
+    ]))
+
     return render_template(
         'views/reports/{}.html'.format(report),
         selected=report,
         jobs=jobs,
+        weeks=weeks,
     )
 
 

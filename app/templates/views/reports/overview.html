@@ -2,6 +2,7 @@
 {% from "components/message-count-label.html" import message_count_label %}
 {% from "components/table.html" import list_table, field, hidden_field_heading, row_heading, text_field, spark_bar_field %}
 {% from "components/report-nav.html" import report_nav %}
+{% from "components/previous-next-navigation.html" import previous_next_navigation %}
 
 {% extends "withnav_template.html" %}
 
@@ -15,82 +16,96 @@
 
     {{ report_nav(selected, current_service=current_service) }}
 
-    <div id='pill-selected-item'>
-      <div class='grid-row bottom-gutter-1-2'>
-        <div class='column-third'>
-          <h2 class='heading-small'>Emails</h2>
-          <div class="keyline-block">
-            {{ big_number(3, 'sent', smaller=True) }}
-            {{ big_number("Unlimited", 'free allowance', smaller=True) }}
-          </div>
+    {% include 'views/reports/_current-financial-year.html' %}
+
+    <div class='grid-row bottom-gutter-1-2'>
+      <div class='column-third'>
+        <h2 class='heading-small'>Emails</h2>
+        <div class="keyline-block">
+          {{ big_number(3, 'sent', smaller=True) }}
+          {{ big_number("Unlimited", 'free allowance', smaller=True) }}
         </div>
-        <div class='column-third'>
-          <h2 class='heading-small'>Text messages</h2>
-          <div class="keyline-block">
-            {{ big_number(481516, 'sent', smaller=True) }}
-            {{ big_number(250000, 'free allowance', smaller=True) }}
-            {{ big_number(0, 'free allowance remaining', smaller=True) }}
-            {% if sms_chargeable %}
+      </div>
+      <div class='column-third'>
+        <h2 class='heading-small'>Text messages</h2>
+        <div class="keyline-block">
+          {{ big_number(481516, 'sent', smaller=True) }}
+          {{ big_number(250000, 'free allowance', smaller=True) }}
+          {{ big_number(0, 'free allowance remaining', smaller=True) }}
+          {% if sms_chargeable %}
+            {{ big_number(
+              481516 - 250000,
+              'at {:.2f} pence per message'.format(0.0155 * 100),
+              smaller=True
+            ) }}
+          {% endif %}
+        </div>
+      </div>
+      <div class='column-one-third'>
+        <h2 class='heading-small'>Letters</h2>
+        <div class="keyline-block">
+          {{ big_number(0, 'sent', smaller=True) }}
+        </div>
+      </div>
+    </div>
+
+    <div class='grid-row bottom-gutter-1-2'>
+      <div class='column-one-third'>
+        <div class="keyline-block">
+          &nbsp;
+        </div>
+      </div>
+      <div class='column-one-third'>
+        <div class="keyline-block">
+          {{ big_number(
+            ((481516 - 250000) * 0.0155),
+            'spent',
+            currency="£",
+            smaller=True
+          ) }}
+        </div>
+      </div>
+      <div class='column-one-third'>
+        <div class="keyline-block">
+          {{ big_number(
+            0,
+            'spent',
+            currency="£",
+            smaller=True
+          ) }}
+        </div>
+      </div>
+    </div>
+
+    <div class='grid-row bottom-gutter-3-2'>
+      <div class='column-whole'>
+        <div class="keyline-block">
+          <div class='grid-row'>
+            <div class='column-one-third'>&nbsp;</div>
+            <div class='column-one-third'>&nbsp;</div>
+            <div class='column-one-third'>
               {{ big_number(
-                481516 - 250000,
-                'at {:.2f} pence per message'.format(0.0155 * 100),
+                ((481516 - 250000) * 0.0155),
+                'total',
+                currency="£",
                 smaller=True
               ) }}
-            {% endif %}
-          </div>
-        </div>
-        <div class='column-one-third'>
-          <h2 class='heading-small'>Letters</h2>
-          <div class="keyline-block">
-            {{ big_number(0, 'sent', smaller=True) }}
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class='grid-row bottom-gutter-1-2'>
-        <div class='column-one-third'>
-          <div class="keyline-block">
-            &nbsp;
-          </div>
-        </div>
-        <div class='column-one-third'>
-          <div class="keyline-block">
-            {{ big_number(
-              ((481516 - 250000) * 0.0155),
-              'spent',
-              currency="£",
-              smaller=True
-            ) }}
-          </div>
-        </div>
-        <div class='column-one-third'>
-          <div class="keyline-block">
-            {{ big_number(
-              0,
-              'spent',
-              currency="£",
-              smaller=True
-            ) }}
-          </div>
-        </div>
-      </div>
-
-      <div class='grid-row'>
-        <div class='column-whole'>
-          <div class="keyline-block">
-            <div class='grid-row'>
-              <div class='column-one-third'>&nbsp;</div>
-              <div class='column-one-third'>&nbsp;</div>
-              <div class='column-one-third'>
-                {{ big_number(
-                  ((481516 - 250000) * 0.0155),
-                  'total',
-                  currency="£",
-                  smaller=True
-                ) }}
-              </div>
-          </div>
-        </div>
-      </div>
+    <div class="keyline-block">
+      {{ previous_next_navigation({
+        'url': '#',
+        'title': '2016 to 2017',
+        'label': 'financial year'
+      }, {
+        'url': '#',
+        'title': '2018 to 2019',
+        'label': 'financial year'
+      }) }}
+    </div>
 
 {% endblock %}

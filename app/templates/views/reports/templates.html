@@ -15,6 +15,8 @@
 
     {{ report_nav(selected, current_service=current_service) }}
 
+    {% include 'views/reports/_date-range.html' %}
+
     {% include 'views/reports/_download.html' %}
 
     <div class='dashboard-table'>

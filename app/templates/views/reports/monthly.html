@@ -15,17 +15,33 @@
 
     {{ report_nav(selected, current_service=current_service) }}
 
+    {% include 'views/reports/_current-financial-year.html' %}
+
     {% include 'views/reports/_download.html' %}
 
     <div class="dashboard-table body-copy-table">
       {% call(month, row_index) list_table(
-        months,
+        [
+          {'name': 'April'},
+          {'name': 'May'},
+          {'name': 'June'},
+          {'name': 'July'},
+          {'name': 'August'},
+          {'name': 'September'},
+          {'name': 'October'},
+          {'name': 'November'},
+          {'name': 'December'},
+          {'name': 'January'},
+          {'name': 'February'},
+          {'name': 'March'}
+        ],
         caption="Total spend",
         caption_visible=False,
         empty_message='',
         field_headings=[
-          'By month',
+          hidden_field_heading('By month'),
           hidden_field_heading('Cost'),
+          hidden_field_heading('Cost')
         ],
         field_headings_visible=True
       ) %}
@@ -33,8 +49,11 @@
           {{ month.name }}
         {% endcall %}
         {% call field(align='left') %}
+          |||||||
+        {% endcall %}
+        {% call field(align='left') %}
           {{ big_number(
-            sms_rate * month.paid,
+            0.0155 * 123,
             currency="£",
             smallest=True
           ) }}
@@ -44,7 +63,7 @@
           {% endif %}
           {% if month.paid %}
             <li class="tabular-numbers">{{ "{:,}".format(month.paid) }} text messages at
-            {{- ' {:.2f}p'.format(sms_rate * 100) }}</li>
+            {{- ' {:.2f}p'.format(0.0155 * 100) }}</li>
           {% endif %}
           {% if not (month.free or month.paid) %}
             <li aria-hidden="true">–</li>
@@ -53,5 +72,16 @@
         {% endcall %}
       {% endcall %}
     </div>
+
+    {% from "components/previous-next-navigation.html" import previous_next_navigation %}
+    {{ previous_next_navigation({
+      'url': '#',
+      'title': '2016 to 2017',
+      'label': 'financial year'
+    }, {
+      'url': '#',
+      'title': '2018 to 2019',
+      'label': 'financial year'
+    }) }}
 
 {% endblock %}
