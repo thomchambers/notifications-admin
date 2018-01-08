@@ -232,7 +232,15 @@ def reports(service_id, report='overview'):
         selected=report,
         jobs=jobs,
         weeks=weeks,
-        months=reversed(get_months_for_financial_year(2017)),
+        months=[
+            {
+                'name': name,
+                'requested_sms': numbers[index] + numbers[index + 1] + numbers[index + 2] + numbers[index + 3],
+                'requested_letters': numbers[index] + numbers[index + 3],
+                'failure_rate': 0,
+            }
+            for index, name in enumerate(reversed(get_months_for_financial_year(2017)))
+        ],
         numbers=numbers,
         highest_number=max(numbers),
         failures=failures,

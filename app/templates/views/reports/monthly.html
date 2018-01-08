@@ -37,17 +37,17 @@
         field_headings_visible=False
       ) %}
         {% call row_heading() %}
-          {{ month }}
+          {{ month.name }}
         {% endcall %}
         {% call field(align='left') %}
           {{ big_number(
-            0.0155 * 123,
+            (0.0155 * month.requested_sms) + (0.33 * month.requested_letters),
             currency="£",
             smallest=True
           ) }}
           <ul class="tabular-numbers">
-            <li>123 text messages at 1.55p</li>
-            <li>33 letters at 36p</li>
+            <li>{{ month.requested_sms }} text messages at 1.55p</li>
+            <li>{{ month.requested_letters }} letters at 33p</li>
           </ul>
         {% endcall %}
       {% endcall %}
