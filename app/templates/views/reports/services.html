@@ -21,12 +21,7 @@
 
     <div class='dashboard-table'>
       {% call(item, row_number) list_table(
-        [
-          {'id': 'foo', 'name': 'Blackpool', 'type': 'sms', 'requested_count': 320, 'failure_rate': 2},
-          {'id': 'foo', 'name': 'Southport', 'type': 'sms', 'requested_count': 190, 'failure_rate': 4},
-          {'id': 'foo', 'name': 'Preston', 'type': 'sms', 'requested_count': 254, 'failure_rate': 5},
-          {'id': 'foo', 'name': 'Morecambe', 'type': 'sms', 'requested_count': 106, 'failure_rate': 1},
-        ],
+        teams,
         caption='foo',
         caption_visible=False,
         empty_message='',
@@ -39,7 +34,7 @@
         {% call row_heading() %}
           <a class="file-list-filename" href="#">{{ item.name }}</a>
         {% endcall %}
-        {{ spark_bar_field(item.requested_count, 321, failure_rate=item.failure_rate) }}
+        {{ spark_bar_field(numbers[row_number + 5] * 51, 42942, failure_rate=item.failure_rate) }}
       {% endcall %}
     </div>
 

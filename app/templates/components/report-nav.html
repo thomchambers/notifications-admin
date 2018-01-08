@@ -14,21 +14,15 @@
             ''
         ),
         (
-            'Monthly',
-            'monthly',
-            url_for('.reports', service_id=current_service.id, report='monthly'),
-            ''
-        ),
-        (
-            'Weekly',
+            'Weekly volumes',
             'weekly',
             url_for('.reports', service_id=current_service.id, report='weekly'),
             ''
         ),
         (
-            'Uploaded files',
-            'uploaded-files',
-            url_for('.reports', service_id=current_service.id, report='uploaded-files'),
+            'Monthly spend',
+            'monthly',
+            url_for('.reports', service_id=current_service.id, report='monthly'),
             ''
         ),
       ],
@@ -42,6 +36,12 @@
             'Templates',
             'templates',
             url_for('.reports', service_id=current_service.id, report='templates'),
+            ''
+        ),
+        (
+            'Uploaded files',
+            'uploaded-files',
+            url_for('.reports', service_id=current_service.id, report='uploaded-files'),
             ''
         ),
         (

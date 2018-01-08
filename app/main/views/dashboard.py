@@ -1,4 +1,6 @@
 import calendar
+import math
+import statistics
 from datetime import datetime, timedelta
 from functools import partial
 from flask import (
@@ -37,6 +39,8 @@ from app.utils import (
 from app.date_utils import (
     get_months_for_financial_year
 )
+
+from faker import Faker
 
 
 # This is a placeholder view method to be replaced
@@ -195,12 +199,63 @@ def reports(service_id, report='overview'):
         )
     ]))
 
+    lots_of_numbers = int(str(math.pi).replace('.', ''))
+
+    raw_numbers = str(int(math.pow(lots_of_numbers, 5)))
+
+    numbers = [
+        max(0, int(raw_numbers[index:index + 3]) - index)
+        for index in range(0, 60)
+    ]
+
+    numbers = numbers * 3
+
+    failures = [
+        min(numbers[index], max(0, int(raw_numbers[index])))
+        for index in range(0, 60)
+    ]
+
+    failures = failures * 3
+
+    teams = [
+        'Blackpool',
+        'Southport',
+        'Preston',
+        'Morecambe',
+    ]
+
+    fake = Faker('en_GB')
+    fake.seed(4321)
+
     return render_template(
         'views/reports/{}.html'.format(report),
         selected=report,
         jobs=jobs,
         weeks=weeks,
         months=reversed(get_months_for_financial_year(2017)),
+        numbers=numbers,
+        highest_number=max(numbers),
+        failures=failures,
+        names=sorted(
+            ({
+                'id': 'foo',
+                'name': '{} {}'.format(fake.first_name(), fake.last_name()),
+                'team': (teams * 1000)[int(i * 1.3)],
+                'requested_count': int(statistics.mean([numbers[i] / 2, 100])),
+                'failure_rate': int(failures[i] * 1.1)
+            } for i in range(60)),
+            key=lambda person: person['name']
+        ),
+        teams=[
+            {
+                'id': 'foo',
+                'name': team,
+                'type': 'sms',
+                'requested_count': numbers[index + 5] * 51,
+                'failure_rate': failures[index + 20],
+            }
+            for index, team in enumerate(teams)
+        ]
     )
 
 

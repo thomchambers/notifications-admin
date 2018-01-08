@@ -21,17 +21,7 @@
 
     <div class='dashboard-table'>
       {% call(item, row_number) list_table(
-        [
-          {
-            'id': 'foo',
-            'name': 'Chris Hill-Scott',
-            'team': 'Blackpool',
-            'requested_count': 321, 'failure_rate': 2
-          },
-          {'id': 'foo', 'name': 'Leo Hemsted', 'team': 'Preston', 'requested_count': 123, 'failure_rate': 4},
-          {'id': 'foo', 'name': 'Rebecca Law', 'team': 'Morcambe', 'requested_count': 3, 'failure_rate': 33},
-          {'id': 'foo', 'name': 'Alexey Bezhan', 'team': 'Southport', 'requested_count': 1, 'failure_rate': 0},
-        ],
+        names,
         caption='foo',
         caption_visible=False,
         empty_message='',
