@@ -164,22 +164,39 @@
   id=None
 ) %}
   {% call field(align='right') %}
-    <span {% if id %}id="{{ id }}"{% endif %} class="spark-bar">
-      <span style="width: {{ count / max_count * 100 }}%">
-        {{ big_number(
-          count,
-          smallest=True
-        ) }}
-      </span>
-    </span>
-    {% if failure_rate %}
-      <span class="spark-bar-failure-rate" style="width: {{ failure_rate }}%">
-        {{ failure_rate }}% failed
-      </span>
-    {% else %}
-      <span class="spark-bar-failure-rate" style="width: 0; color: grey">
-        No failures
-      </span>
-    {% endif %}
+    {{ spark_bar(
+      count,
+      max_count,
+      failure_rate,
+      id
+    ) }}
   {% endcall %}
+{% endmacro %}
+
+
+{% macro spark_bar(
+  count,
+  max_count,
+  failure_rate=None,
+  id=None,
+  label=''
+) %}
+  <span {% if id %}id="{{ id }}"{% endif %} class="spark-bar">
+    <span class="spark-bar-bar" style="width: {{ count / max_count * 100 }}%">
+      {{ big_number(
+        count,
+        label=label,
+        smallest=True
+      ) }}
+    </span>
+  </span>
+  {% if failure_rate %}
+    <span class="spark-bar-failure-rate" style="width: {{ failure_rate }}%">
+      {{ failure_rate }}% failed
+    </span>
+  {% else %}
+    <span class="spark-bar-failure-rate" style="width: 0; color: grey">
+      No failures
+    </span>
+  {% endif %}
 {% endmacro %}

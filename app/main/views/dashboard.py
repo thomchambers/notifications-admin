@@ -34,6 +34,10 @@ from app.utils import (
     Spreadsheet,
 )
 
+from app.date_utils import (
+    get_months_for_financial_year
+)
+
 
 # This is a placeholder view method to be replaced
 # when product team makes decision about how/what/when
@@ -196,6 +200,7 @@ def reports(service_id, report='overview'):
         selected=report,
         jobs=jobs,
         weeks=weeks,
+        months=reversed(get_months_for_financial_year(2017)),
     )
 
 

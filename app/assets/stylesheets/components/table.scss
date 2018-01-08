@@ -290,11 +290,11 @@ a.table-show-more-link {
   display: block;
   width: 100%;
   margin-bottom: $gutter-half;
-  height: $gutter-half;
+  min-height: $gutter-half;
   color: $text-colour;
   text-align: left;
 
-  span {
+  &-bar {
     box-sizing: border-box;
     display: inline-block;
     overflow: visible;
@@ -306,12 +306,18 @@ a.table-show-more-link {
     transition: width 0.6s ease-in-out;
   }
 
+  .big-number-label {
+    white-space: nowrap;
+    background: transparent;
+    padding-bottom: 0;
+  }
+
   &-failure-rate {
     @include core-16;
     display: block;
     border-top: 5px solid $red;
     color: $red;
-    margin: 25px 0 0 0;
+    margin: -20px 0 5px 0;
     padding: 5px 0 0 0;
     text-align: left;
     white-space: nowrap;
