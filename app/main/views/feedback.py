@@ -192,8 +192,7 @@ def is_weekend(time):
 
 def is_bank_holiday(time):
     return time.strftime('%d/%m/%Y') in {
-        # taken from
-        # https://github.com/alphagov/calendars/blob/7f6512b0a95d77aa22accef105860074c19f1ec0/lib/data/bank-holidays.json
+        # taken from https://www.gov.uk/bank-holidays.json
         "01/01/2016",
         "25/03/2016",
         "28/03/2016",
@@ -210,6 +209,22 @@ def is_bank_holiday(time):
         "28/08/2017",
         "25/12/2017",
         "26/12/2017",
+        "2018-01-01",
+        "2018-03-30",
+        "2018-04-02",
+        "2018-05-07",
+        "2018-05-28",
+        "2018-08-27",
+        "2018-12-25",
+        "2018-12-26",
+        "2019-01-01",
+        "2019-04-19",
+        "2019-04-22",
+        "2019-05-06",
+        "2019-05-27",
+        "2019-08-26",
+        "2019-12-25",
+        "2019-12-26",
     }
 
 
