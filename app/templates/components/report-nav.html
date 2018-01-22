@@ -62,3 +62,41 @@
     ) }}
   </div>
 {% endmacro %}
+
+
+{% macro org_report_nav(
+  selected=None,
+  current_service=None
+) %}
+  <div class="bottom-gutter">
+    {{ pill(
+      [
+        (
+            'Overview',
+            'overview',
+            url_for('.reports', service_id=current_service.id),
+            ''
+        ),
+        (
+            'Weekly',
+            'weekly',
+            url_for('.reports', service_id=current_service.id, report='weekly'),
+            ''
+        ),
+        (
+            'Monthly spend',
+            'monthly',
+            url_for('.reports', service_id=current_service.id, report='monthly'),
+            ''
+        ),
+        (
+            'Teams',
+            'services',
+            url_for('.reports', service_id=current_service.id, report='services'),
+            ''
+        ),
+      ],
+      selected
+    ) }}
+  </div>
+{% endmacro %}
