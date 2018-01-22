@@ -167,6 +167,86 @@ def usage(service_id):
     )
 
 
+fake = Faker('en_GB')
+fake.seed(4321)
+
+lots_of_numbers = int(str(math.pi).replace('.', ''))
+
+raw_numbers = str(int(math.pow(lots_of_numbers, 5)))
+
+numbers = [
+    max(0, int(raw_numbers[index:index + 3]) - index)
+    for index in range(0, 60)
+]
+
+numbers = numbers * 3
+
+failures = [
+    min(numbers[index], max(0, int(raw_numbers[index])))
+    for index in range(0, 60)
+]
+
+failures = failures * 3
+
+teams = [
+    'Blackpool',
+    'Southport',
+    'Preston',
+    'Morecambe',
+]
+
+
+@main.route("/organisations/test/redirect-to-service")
+@login_required
+@user_has_permissions('view_activity', admin_override=True)
+def org_redirect():
+    session['fake_service_name'] = request.args.get('fake_service_name')
+    return redirect(url_for(".reports", service_id=current_service['id']))
+
+
+@main.route("/organisations/test/reports")
+@main.route("/organisations/test/reports/<report>")
+@login_required
+@user_has_permissions('manage_settings', admin_override=True)
+def org_reports(report='overview'):
+    return render_template(
+        'views/reports/org-{}.html'.format(report),
+        selected='foo',
+        jobs=[],
+        weeks=[],
+        months=[
+            {
+                'name': name,
+                'requested_sms': numbers[index] + numbers[index + 1] + numbers[index + 2] + numbers[index + 3],
+                'requested_letters': numbers[index] + numbers[index + 3],
+                'failure_rate': 0,
+            }
+            for index, name in enumerate(reversed(get_months_for_financial_year(2017)))
+        ],
+        numbers=[],
+        highest_number=0,
+        failures={},
+        names=sorted(
+            ({
+                'id': 'foo',
+                'name': '{} {}'.format(fake.first_name(), fake.last_name()),
+                'team': (teams * 1000)[int(i * 1.3)],
+                'requested_count': int(statistics.mean([numbers[i] / 2, 100])),
+                'failure_rate': int(failures[i] * 1.1)
+            } for i in range(60)),
+            key=lambda person: person['name']
+        ),
+        teams=[
+            {
+                'id': 'foo',
+                'name': team,
+                'type': 'sms',
+                'requested_count': numbers[index + 5] * 51,
+                'failure_rate': failures[index + 20],
+            }
+            for index, team in enumerate(teams)
+        ]
+    )
 
 
 @main.route("/services/<service_id>/reports")
@@ -198,34 +278,6 @@ def reports(service_id, report='overview'):
             'today'
         )
     ]))
-
-    lots_of_numbers = int(str(math.pi).replace('.', ''))
-
-    raw_numbers = str(int(math.pow(lots_of_numbers, 5)))
-
-    numbers = [
-        max(0, int(raw_numbers[index:index + 3]) - index)
-        for index in range(0, 60)
-    ]
-
-    numbers = numbers * 3
-
-    failures = [
-        min(numbers[index], max(0, int(raw_numbers[index])))
-        for index in range(0, 60)
-    ]
-
-    failures = failures * 3
-
-    teams = [
-        'Blackpool',
-        'Southport',
-        'Preston',
-        'Morecambe',
-    ]
-
-    fake = Faker('en_GB')
-    fake.seed(4321)
 
     return render_template(
         'views/reports/{}.html'.format(report),

@@ -7,8 +7,9 @@
 {% block fullwidth_content %}
   <div id="content">
     <div class="navigation-service">
-      <div class="navigation-service-name">
-        {{ current_service.name }}
+      <div class="navigation-service-name org-breadcrumb">
+        <a href="/organisations/test/reports">South Oxfordshire District Council</a>
+        <span>{{ session['fake_service_name'] or current_service.name }}</span>
       </div>
       <a href="{{ url_for('main.choose_service') }}" class="navigation-service-switch">Switch service</a>
     </div>

@@ -1,4 +1,4 @@
-{% extends "withnav_template.html" %}
+{% extends parent or "withnav_template.html" %}
 {% from "components/table.html" import list_table, row, field, hidden_field_heading %}
 {% from "components/page-footer.html" import page_footer %}
 {% from "components/tick-cross.html" import tick_cross %}
@@ -46,6 +46,7 @@
           </span>
         </h3>
         <ul class="tick-cross-list">
+          {% if not parent %}
           <div class="tick-cross-list-permissions">
             {{ tick_cross(
               user.has_permissions('send_texts', 'send_emails', 'send_letters'),
@@ -73,6 +74,7 @@
               </div>
             {% endif %}
           </div>
+          {% endif %}
           {% if current_user.has_permissions('manage_users', admin_override=True) %}
             {% if current_user.id != user.id %}
               <li class="tick-cross-list-edit-link">
@@ -96,6 +98,7 @@
             <span style="font-weight: bold">{{ user.email_address }}</span>
           </h3>
           <ul class="tick-cross-list">
+            {% if not parent %}
             <div class="tick-cross-list-permissions">
               {{ tick_cross(
                 user.has_permissions('send_texts', 'send_emails', 'send_letters'),
@@ -123,6 +126,7 @@
               </div>
             {% endif %}
             </div>
+            {% endif %}
             <li class="tick-cross-list-edit-link">
               {% if user.status == 'pending' and current_user.has_permissions('manage_users') %}
                 <a href="{{ url_for('.cancel_invited_user', service_id=current_service.id, invited_user_id=user.id)}}">Cancel invitation</a>

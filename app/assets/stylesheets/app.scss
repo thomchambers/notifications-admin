@@ -80,6 +80,7 @@ a {
 .column-main {
 
   position: relative;
+  margin-top: 22px;
 
   .heading-large,
   > .heading-medium {
@@ -238,4 +239,29 @@ details .arrow {
 
 .heading-inline {
   display: inline-block;
+}
+
+.org-breadcrumb {
+
+  a {
+    text-decoration: none;
+    font-weight: normal;
+    //max-width: 10em;
+    margin-bottom: -7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
+
+  span {
+    background-image: file-url("separator-2x.png");
+    background-size: 6px 11px;
+    background-position: 0% 50%;
+    background-repeat: no-repeat;
+    margin-left: 0.6em;
+        margin-bottom: 0.4em;
+        padding-left: 0.9em;
+  }
+
 }
